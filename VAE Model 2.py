@@ -5,13 +5,13 @@
 
 # ## 1. Data
 
-# For the 3rd pipeline, we will perform more operations on the dataset that we used on the first pipeline. As a refresher, below is the summarized description on my dataset from assignment one. 
+# For the 3rd pipeline, we will perform more operations on the dataset that we used on the first pipeline. As a refresher, below is the summarized description of my dataset. 
 
-# In the Piano dataset, I selected 30 tracks that come from at least 8 different pianos over the past 10 years. The Human dataset contains 30 tracks that is mainly human voice. 
+# In the Piano dataset, I selected 30 tracks that come from at least 8 different pianos over the past 10 years. The Human dataset contains 30 tracks that are mainly human voice. 
 # 
-# Audio files in both datasets has varying length from 10 seconds to 10min. The files are also recorded in varying conditions. All audio files are converted to .wav format, and the two dataset are saved separately in two directories, Data/Piano and Data/Human.
+# Audio files in both datasets have varying lengths from 10 seconds to 10min. The files are also recorded in varying conditions. All audio files are converted to .wav format, and the two dataset are saved separately in two directories, Data/Piano and Data/Human.
 # 
-# Below is two selected examples of the audio data, one from Piano and one from Human. Piano29.wav is Chopin's Nocturne Op32 No.2, one of my favorite nocturnes; Human26.wav is a group of ladies singing that I recorded in Argentina. Enjoy!"
+# Below are two selected examples of the audio data, one from Piano and one from Human. Piano29.wav is Chopin's Nocturne Op32 No.2, one of my favorite nocturnes; Human26.wav is a group of ladies singing that I recorded in Argentina. Enjoy!"
 
 
 
@@ -32,9 +32,9 @@ ipd.Audio('Data/Piano/Piano29.wav')
 
 # ## 2. Data Structure 
 
-# In the second pipeline, we will still use the Librosa library for audio data processing. 
+# we will still use the Librosa library for audio data processing. 
 # 
-# As mentioned in assignment 1, we use Librosa.load() function to load .wav file into a time series array, whose elements represents the amplitude of the audio signal at a time point. 
+# we use Librosa.load() function to load .wav file into a time series array, whose elements represents the amplitude of the audio signal at a time point. 
 
 
 
@@ -94,20 +94,15 @@ plt.show()
 # From the two spectrograms, we can see that, the shitfed Mel spectrogram shows the same data pattern as the Original Mel spectrogram horizontally, but it shifts the frequency upwards. If we stack the two audio tracks together, we will get an octave chord. We can produce harmoney by applying data augmentation on the same track with different scale (such as moving the note upward by three notes and five notes to produce a major third chord). 
 
 # ## Train the Model.
-# 
-# 
 
 # In the below model, we upgraded our VAE by adding convolution layers to capture more details of the mel-spectrogram instead of using the fully connected layers like above. 
 # 
 # Since we're using Mel-spectrogram as input, CNN VAEs should perform better. Each Mel-Spectrogram is convolved with a set of kernels that scan the image and produce a set of feature maps that highlight the presence of specific patterns in the image. These feature maps can then be passed through additional convolutional layers to identify more complex patterns or combined with pooling layers to reduce the dimensionality of the feature maps(Shakflat, 2018). Therefore, they are able to exploit the translation invariance property of images, which means that the same pattern can appear in different locations in an image. By using shared weights across the convolutional filters, convolutional layers can identify the same pattern regardless of where it appears in the image. In this case, the pattern that appeared in the Mel-Spectrogram is basically same pieces of audio(could be melody or chord) that appeared again and again. Therefore, the CNN VAE should capture the reapting audio pattern better. 
-:
 
 
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose 
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping
-
-:
 
 
 #define sampling function
@@ -143,8 +138,6 @@ def decoder(input_shape, latent_dim):
     outputs = Conv2DTranspose(1, 3, padding='same', activation='sigmoid')(x)
     decoder = Model(latent_inputs, outputs, name='decoder')
     return decoder
-
-:
 
 
 # Reshape audio data to include a channel dimension
@@ -186,14 +179,11 @@ cnn_vae.fit([train_data, train_data], epochs=50, batch_size=batch_size, validati
 
 
 # ## Performance Evaluation.
-:
-
 
 cnn_vae.summary()
 
 
 # Compared to the fully connected VAE, our CNN VAE has almost six times the amount of parameters. Let's see the output of the model. 
-:
 
 
 # Reshape audio data to include a channel dimension
@@ -229,14 +219,8 @@ for index in range(num_spectrograms):
     plot_spectrogram_comparison(index)
 
 
-# Unfortunately, from the generated mel_spectrogram we see that our CNN VAE model performs worse than than the fully connected VAE. The generated Mel_Spectrogram is way too fuzzy. From the loss functon, we already see that the reconstruction loss is much higher than the fully connected model. 
-# 
-
 # ## References
 # Rocca, J. (2019). Understanding Variational Autoencoders (VAEs). Towards Data Science.
 # 
 # Shafkat, I. (2018, June 1). Intuitively Understanding Convolutions for Deep Learning. Towards Data Science.
 
-# ## HC
-# 
-# \#algorithms: Througout the semester, I learned ML models and algorithms & implemneted them into code.
